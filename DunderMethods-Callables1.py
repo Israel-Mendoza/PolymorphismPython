@@ -10,7 +10,8 @@ class Person:
 p = Person()
 p()  # -> "__call__ was called! LOL"
 
-# Implementing the "partial" object
+
+# Implementing the "partial" function as an object
 
 
 class MyPartial:
