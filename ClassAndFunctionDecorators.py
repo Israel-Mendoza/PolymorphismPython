@@ -17,14 +17,13 @@ def function_profiler(func: FunctionType) -> FunctionType:
         result = func(*args, **kwargs)
         end_time = perf_counter()
         _total_time += end_time - start_time
-        _average_time = _total_time / _counter
         return result
 
     def counter():
         return _counter
 
     def average_time():
-        return _average_time
+        return _total_time / _counter
 
     closure.counter = counter
     closure.average_time = average_time
@@ -38,6 +37,7 @@ def my_func() -> None:
 
 # Decorating the 'counting' function
 my_func = function_profiler(my_func)
+# Introspecting the new decorated function
 print(f"Type of my_func: {type(my_func)}")
 print(f"Free variables in 'counting': {my_func.__code__.co_freevars}")
 
@@ -57,7 +57,7 @@ class FunctionProfiler:
         self._func = func
         self._counter = 0
         self._total_time = 0
-        self._average_time = 0
+        self._average_time = None
 
     @property
     def counter(self):
@@ -67,6 +67,8 @@ class FunctionProfiler:
     @property
     def average_time(self):
         """The calculated average time"""
+        if self._average_time is None:
+            self._average_time = self._total_time / self._counter
         return self._average_time
 
     def __call__(self, *args, **kwargs):
@@ -75,7 +77,7 @@ class FunctionProfiler:
         result = self._func(*args, **kwargs)
         end_time = perf_counter()
         self._total_time += end_time - start_time
-        self._average_time = self._total_time / self._counter
+        self._average_time = None
         return result
 
 
@@ -86,6 +88,7 @@ def my_func() -> None:
 
 # Decorating the 'counting' function
 my_func = FunctionProfiler(my_func)
+# Introspecting the new object:
 print(f"Type of my_func: {type(my_func)}")
 print(f"Attributes in 'counting': {my_func.__dict__}")
 
